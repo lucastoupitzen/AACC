@@ -54,7 +54,6 @@ def cadastro(request):
         return HttpResponse("Usuário cadastrado com sucesso!")
 
 @login_required(login_url="/login/")
-@allowed_users(["coordenador"])
 def avaliar_page(request):
     return render(request, "avaliacao.html")
 
@@ -72,7 +71,12 @@ def login(request):
         usuario = authenticate(username=numero_usp, password=senha)
         if usuario:
             login_django(request, usuario)
-            return redirect("home")
+            if request.user.groups.exists():
+                group = request.user.groups.all()[0].name
+                if group == "coordenador":
+                    return redirect("home")
+                
+            return redirect("avaliar_page")
 
         return JsonResponse({'message': 'Login errado'})  # Você pode retornar outras informações necessárias
 
@@ -102,6 +106,22 @@ def aacc_aguardando_avaliacao(request, nrousp):
     if request.method == 'GET':
         print(nrousp)
         dados = crud_AACC().read_AACC_nao_avaliadas(nrousp)
+
+        for chave, valor in dados.items():
+            valor['doc'] = str(valor['doc'])
+
+        dados_json = json.dumps(dados, cls=DjangoJSONEncoder)
+
+
+        return JsonResponse(dados_json, safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+    
+def aacc_aguardando_confirmacao(request):
+
+    if request.method == 'GET':
+
+        dados = crud_AACC().read_AACC_nao_confirmadas()
 
         for chave, valor in dados.items():
             valor['doc'] = str(valor['doc'])
@@ -151,11 +171,28 @@ def avaliar(request):
         dados = crud_AACC_para_avaliacao().update_AACC_para_avaliacao(id_AACC, comentarios, status)
 
         if dados:
-            print("Aqui")
             crud_AACC().update_AACC_status(id_AACC, 2)
             return JsonResponse({'success': 'Encaminhamento realizado com sucesso!'})
         else:
             return JsonResponse({'error': 'Problema ao realizar o encaminhamento!'})
+    
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
+    
+@login_required(login_url="/login/")
+@allowed_users(["coordenador"])
+def confirmar_page(request):
+    return render(request, "confirmar.html")
+    
+@allowed_users(["coordenador"])
+def confirmar(request):
+    
+    if request.method == 'POST':
+
+        id_AACC = request.POST.get('id_AACC')
+
+        crud_AACC().update_AACC_status(id_AACC, 3)
+        return JsonResponse({'success': 'Encaminhamento realizado com sucesso!'})
     
     else:
         return JsonResponse({'error': 'Invalid request method'})

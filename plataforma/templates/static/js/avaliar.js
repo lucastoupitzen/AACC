@@ -8,7 +8,7 @@ function carregarDados() {
 
 
     $.ajax({
-        url: `../../coordenador/nao_avaliadas/${informacaoUsuario}`,
+        url: `../../nao_avaliadas/${informacaoUsuario}`,
         type: 'GET',
         dataType: 'json',
         headers: {
@@ -95,12 +95,12 @@ function confirmarAvaliacao(status) {
 
 
     // Feche a modal após o processamento
-    $('#modalEncaminhar').modal('hide');
+    $('#modalAvaliar').modal('hide');
 }
 
 // Função para abrir o arquivo em uma nova aba
 function abrirArquivoEmNovaAba(caminhoArquivo) {
-    window.open(caminhoArquivo, '_blank');
+    window.open(`../${caminhoArquivo}`, '_blank');
 }
 
 function converterFormatoData(dataString) {

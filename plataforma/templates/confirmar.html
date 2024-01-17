@@ -37,7 +37,7 @@
         </div>
     </header>
     <div class="container mt-5 mainframe">
-        <h2 class="titulo-tabela">Avaliação das atividades complementares</h2>
+        <h2 class="titulo-tabela">Confirmar avaliações das AACC's</h2>
         <div class="scrollable-div">
             <div class="table-responsive">
                 <table class="table table-borderless table-sm">
@@ -45,10 +45,10 @@
                         <thead>
                             <tr>
                                 <th class="text-center w-20">Data de envio</th>
-                                <th  class="text-center w-20">Aluno</th>
-                                <th class="text-center w-20">Tipo</th>
+                                <th class="text-center w-20">Status</th>
                                 <th class="text-center w-20">Documento</th>
-                                <th class="text-center w-20">Avaliar</th>
+                                <th class="text-center w-20">Ver avaliação</th>
+                                <th class="text-center w-20">Confirmar</th>
                             </tr>
                         </thead>
                     
@@ -61,33 +61,35 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="modalAvaliar" tabindex="-1" aria-labelledby="avaliarModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalAvaliacao" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="avaliarModalLabel">Avaliar</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Detalhes da Avaliação</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- Input de texto para comentários -->
+                    <!-- Campo de Comentários Realizados -->
                     <div class="mb-3">
-                        <label for="comentarios" class="form-label">Comentários:</label>
-                        <textarea class="form-control" id="comentarios" rows="3"></textarea>
+                        <label for="comentarios" class="form-label">Comentários Realizados:</label>
+                        <textarea class="form-control" id="comentarios" rows="3" readonly></textarea>
+                    </div>
+                    <!-- Campo de Status -->
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status:</label>
+                        <p id="status"> </p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!-- Botão "Indeferir" -->
-                    <button type="submit" class="btn btn-danger" onclick="confirmarAvaliacao(2)" data-dismiss="modal">Indeferir</button>
-                    <!-- Botão "Deferir" -->
-                    <button type="submit" class="btn btn-success" onclick="confirmarAvaliacao(1)" data-dismiss="modal">Deferir</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>
     </div>
+    
 </body>
 
-<script src="{% static 'js/avaliar.js' %}"></script>
+<script src="{% static 'js/confirmar.js' %}"></script>
 </html>

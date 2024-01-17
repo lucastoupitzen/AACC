@@ -96,6 +96,26 @@ class Conector():
         except:
             return None
         
+    def get_conexao_AACC_nao_confirmadas(self):
+         
+        try:
+            conexao = AACC.objects.filter(status=2)
+            dados = {}
+            for dado in conexao:
+                aacc_avaliada = AACC_para_avaliacao.objects.filter(id_aacc=AACC.objects.get(id_aacc=dado.id_aacc))
+                dados[dado.id_aacc] = {
+                    "aluno": dado.aluno,
+                    "status": dado.status,
+                    "data_envio": dado.data_envio,
+                    "doc": dado.doc,
+                    "avaliacao": aacc_avaliada[0].status,
+                    "comentarios": aacc_avaliada[0].comentarios
+                }
+            return dados
+        except: 
+            return None
+
+        
     def set_AACC_status(self, id_aacc, status):
         try: 
             aacc = AACC.objects.get(id_aacc=id_aacc)

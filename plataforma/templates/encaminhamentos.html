@@ -21,10 +21,10 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <p class="nav-link text-light">{{ request.user }}</p>
+                    <p class="nav-link text-light" >{{ request.user.first_name }} {{ request.user.last_name }}</p>
                 </li>
                 <li class="nav-item">
-                    <p class="nav-link text-light">Coordenador</p>
+                    <p class="nav-link text-light" id="nrousp">{{ request.user }}</p>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Ajuda</a>

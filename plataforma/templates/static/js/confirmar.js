@@ -4,7 +4,7 @@ function carregarDados() {
     const csrfToken = getCookie("csrftoken");
 
     $.ajax({
-        url: '/naoencaminhadas',
+        url: '../confirmar_page/nao_confirmadas',
         type: 'GET',
         dataType: 'json',
         headers: {
@@ -16,20 +16,35 @@ function carregarDados() {
 
             data =  JSON.parse(data);
             $.each(data, function (chave, valor) {
+
+                let valorText;
+
+
+                if(valor.avaliacao == "1"){
+                    valorText = "Deferida"
+                } else {
+                    valorText = "Indeferida"
+                }
+
                 var linha = $('<tr>');
                 linha.append($('<td>').addClass("text-center w-20").text(converterFormatoData(valor.data_envio)));
-                linha.append($('<td>').addClass("text-center w-20").text(valor.aluno));
-                linha.append($('<td>').addClass("text-center w-20").text("Tipo"));
-
+                linha.append($('<td>').addClass("text-center w-20").text(valorText));
+                
+                
                 var botaoCelulaVisualizar = $('<td>').addClass('text-center w-20');
                 var botaoVisualizar = $('<button>').addClass('btn btn-primary visualizar').text('Visualizar');
                 botaoCelulaVisualizar.append(botaoVisualizar);
                 linha.append(botaoCelulaVisualizar);
+                
+                var botaoCelulaAvaliacao = $('<td>').addClass('text-center w-20');
+                var botaoAvaliacao = $('<button>').addClass('btn btn-primary avaliacao').text('Avaliação');
+                botaoCelulaAvaliacao.append(botaoAvaliacao);
+                linha.append(botaoCelulaAvaliacao);
 
-                var botaoCelulaEncaminhar = $('<td>').addClass('text-center w-20');
-                var botaoEncaminhar = $('<button>').addClass('btn btn-primary encaminhar').text('Encaminhar');
-                botaoCelulaEncaminhar.append(botaoEncaminhar);
-                linha.append(botaoCelulaEncaminhar);
+                var botaoCelulaConfirmar = $('<td>').addClass('text-center w-20');
+                var botaoConfirmar = $('<button>').addClass('btn btn-primary confirmar').text('Confirmar');
+                botaoCelulaConfirmar.append(botaoConfirmar);
+                linha.append(botaoCelulaConfirmar);
                 
                 tabelaCorpo.append(linha);
 
@@ -38,8 +53,13 @@ function carregarDados() {
                     abrirArquivoEmNovaAba(valor.doc);
                 });
 
-                botaoEncaminhar.on('click', function() {
-                    abrirModalEncaminhar(chave);
+                // Adicionar evento de clique ao botão
+                botaoAvaliacao.on('click', function() {
+                    abrirModalAvaliacao(valor.avaliacao, valor.comentarios)
+                });
+
+                botaoConfirmar.on('click', function() {
+                    confirmarAvaliacao(chave);
                 });
 
             });
@@ -49,6 +69,17 @@ function carregarDados() {
         }
     });
 };
+
+function abrirModalAvaliacao(avaliacao, comentarios){
+    // Atualize o ID da modal conforme necessário
+    var modalAvaliacao = $('#modalAvaliacao');
+
+    $("#comentarios").text(comentarios);
+    $("#status").text((avaliacao == "1") ? "Deferido" : "Indeferido");
+
+    // Exiba a modal
+    modalAvaliacao.modal('show');
+}
 
 function abrirModalEncaminhar(id_aacc) {
     // Atualize o ID da modal conforme necessário
@@ -60,20 +91,16 @@ function abrirModalEncaminhar(id_aacc) {
     modalEncaminhar.modal('show');
 }
 
-function confirmarEncaminhamento() {
-    // Aqui, você pode obter o valor do campo de seleção e processar o encaminhamento conforme necessário
-    var professorSelecionado = $('#selecaoProfessor').val();
+function confirmarAvaliacao(id_AACC) {
     
-    var id_AACC = $('#modalEncaminhar').data('id_aacc');
 
     const csrfToken = getCookie("csrftoken");
 
     $.ajax({
         type: 'POST',
-        url: '/encaminhar/',  
+        url: './confirmar',  
         data: {
-            'professorSelecionado': professorSelecionado,
-            'id_AACC': id_AACC,
+            'id_AACC': id_AACC
         },
         headers: {
             'X-CSRFToken': csrfToken 
@@ -88,9 +115,6 @@ function confirmarEncaminhamento() {
         }
     });
 
-
-    // Feche a modal após o processamento
-    $('#modalEncaminhar').modal('hide');
 }
 
 // Função para abrir o arquivo em uma nova aba

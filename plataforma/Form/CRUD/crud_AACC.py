@@ -14,3 +14,6 @@ class crud_AACC():
     
     def update_AACC_status(self, id_aacc, status):
         return Conector().set_AACC_status(id_aacc, status)
+    
+    def read_AACC_nao_confirmadas(self):
+        return Conector().get_conexao_AACC_nao_confirmadas()
