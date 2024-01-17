@@ -32,6 +32,7 @@ def home_page(request):
 
 @unauthenticated_user
 def cadastro(request):
+
     if request.method == 'GET':
         return render(request, "cadastro.html")
     
@@ -51,6 +52,12 @@ def cadastro(request):
         user.save()
 
         return HttpResponse("Usuário cadastrado com sucesso!")
+
+@login_required(login_url="/login/")
+@allowed_users(["coordenador"])
+def avaliar_page(request):
+    return render(request, "avaliacao.html")
+
 
 @unauthenticated_user 
 def login(request):
@@ -89,6 +96,22 @@ def aacc_aguardando_encaminhamento(request):
         return JsonResponse(dados_json, safe=False)
     else:
         return JsonResponse({'error': 'Invalid request method'})
+    
+def aacc_aguardando_avaliacao(request, nrousp):
+
+    if request.method == 'GET':
+        print(nrousp)
+        dados = crud_AACC().read_AACC_nao_avaliadas(nrousp)
+
+        for chave, valor in dados.items():
+            valor['doc'] = str(valor['doc'])
+
+        dados_json = json.dumps(dados, cls=DjangoJSONEncoder)
+
+
+        return JsonResponse(dados_json, safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request method'})
 
 def visualizar_documento(request, nome_arquivo):
     caminho_documento = os.path.join('/home/lucas/Desktop/projetos/IC/AACC/AACC/plataforma/templates/static', 'documentos', nome_arquivo)
@@ -116,3 +139,23 @@ def encaminhar(request):
     else:
         return JsonResponse({'error': 'Invalid request method'})
 
+
+def avaliar(request):
+
+    if request.method == 'POST':
+
+        id_AACC = request.POST.get('id_AACC')
+        comentarios = request.POST.get('comentarios')
+        status = request.POST.get('status')
+
+        dados = crud_AACC_para_avaliacao().update_AACC_para_avaliacao(id_AACC, comentarios, status)
+
+        if dados:
+            print("Aqui")
+            crud_AACC().update_AACC_status(id_AACC, 2)
+            return JsonResponse({'success': 'Encaminhamento realizado com sucesso!'})
+        else:
+            return JsonResponse({'error': 'Problema ao realizar o encaminhamento!'})
+    
+    else:
+        return JsonResponse({'error': 'Invalid request method'})

@@ -9,5 +9,8 @@ class crud_AACC():
     def read_AACC_nao_delegadas(self):
         return Conector().get_conexao_AACC_nao_encaminhadas()
     
+    def read_AACC_nao_avaliadas(self, id_avaliador):
+        return Conector().get_conexao_AACC_nao_avaliadas(id_avaliador)
+    
     def update_AACC_status(self, id_aacc, status):
         return Conector().set_AACC_status(id_aacc, status)
